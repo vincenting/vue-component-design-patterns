@@ -6,22 +6,22 @@
 当前端的页面结构还是在服务器端渲染的时候，我们通过拆分模板复用 html 块的方式去思考代码的复用。例如在编辑和创建页面我们都会用到相同的一个表单，于是我们抽出 form 的代码放到 `_.form.html` 里面，并且在代码里面增加外部变量的处理让他可以同时支持两个地方的调用。例如一下选于 Rails 的一段代码：
 
 ```ruby
-`\<%= form_for @article, url: {action: "create"} do |f| %\>
-  \<%= f.text_field :title %\>
-  \<%= f.submit @article.created_at  ? " Update " : " Create" %\>
-\<% end %\>
-`
-`
+<%= form_for @article, url: {action: "create"} do |f| %>
+  <%= f.text_field :title %>
+  <%= f.submit @article.created_at  ? " Update " : " Create" %>
+<% end %>
+```
+
 随着前端交互逐渐变得复杂，聪明的前端工程师们又开始思考如何去组织交互代码。因为处在 jQuery 最辉煌的年代，所以首选都是写 jQuery 插件。
 
 ```javascript
-`function($) {
-$.fn.pluginName = function(options) {
-// 根据传入的参数去使用 jQuery 操作 dom。
-};
+function($) {
+  $.fn.pluginName = function(options) {
+  // 根据传入的参数去使用 jQuery 操作 dom。
+  };
 })(jQuery)
-`
-`
+```
+
 我们针对不同的节点去使用相同的插件，并且传入不同的参数去支持多样化。业务越来越复杂，为了更好的控制界面，前端开发们开始通过字符串拼接的方式，例如 `var html = "<div class='datepick__wrapper__title'>" + str + "</div>"`，来取得了界面 html 输出的部分控制权。因为这种维护方式相对较为繁琐，后来涌现出了很多前端的模板引擎来简化在前端进行部分 html 代码的渲染工作。
 
 虽然上面两种方式截然不同，但是，你会发现，当你去思考如何复用你的界面或者交互的时候，你需要在外围传入参数来实现多样化。和编程一样，当你需要复用某个代码块的时候，第一反应都是提取出一个方法，方法通常都有参数。最终上面的内容可以简化为 `const html = fn(optioins)`。抽象方法增加了原代码块的复杂度，但是却减少了复制粘贴代码的需要。
